@@ -1,0 +1,23 @@
+<launch>
+  <!-- realtime_urdf_filter arguments -->
+  <arg name="nodelet" default="false"/>
+
+  <!-- Launch nodelet -->
+  <node if="$(arg nodelet)" pkg="nodelet" type="nodelet" name="realtime_urtf_filter_nodelet" args="load realtime_urdf_filter/RealtimeURDFFilterNodelet camera_nodelet_manager" output="screen">
+    <remap from="~input_depth" to="/camera/depth/image_raw"/>
+    <remap from="~output_depth" to="/camera/depth_filtered/image_raw" />
+    <remap from="~output_mask" to="/urdf_filtered_mask" />
+
+    <rosparam command="load" file="$(find realtime_urdf_filter)/launch/husky_kinectv2_filter_parameters.yaml"/>
+  </node>
+
+  <node unless="$(arg nodelet)"
+    pkg="realtime_urdf_filter" type="realtime_urdf_filter" name="$(anon realtime_urdf_filter)" output="screen">
+    <remap from="~input_depth" to="/camera/depth/image_raw"/>
+    <remap from="~output_depth" to="/camera/depth_filtered/image_raw" />
+    <remap from="~output_mask" to="/urdf_filtered_mask" />
+
+    <rosparam command="load" file="$(find realtime_urdf_filter)/launch/husky_kinectv2_filter_parameters.yaml"/>
+  </node>
+
+</launch>
